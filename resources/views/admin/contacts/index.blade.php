@@ -1,0 +1,9 @@
+@extends('layouts.admin')
+
+@section('title', 'Tin nhắn liên hệ')
+@section('page_title', 'Liên hệ')
+
+@section('content')
+    <div class="mb-4"><h1 class="h3 fw-bold mb-1">Tin nhắn liên hệ</h1><p class="text-muted-valora mb-0">Các câu hỏi được gửi từ website tuyển dụng.</p></div>
+    <div class="admin-card"><form class="p-3 border-bottom" method="GET"><div class="row g-2"><div class="col-md"><input class="form-control" name="keyword" value="{{ request('keyword') }}" placeholder="Tên hoặc email"></div><div class="col-md-auto"><button class="btn btn-outline-primary btn-icon w-100" type="submit"><i data-lucide="search" class="icon-sm"></i>Tìm kiếm</button></div></div></form><div class="table-responsive"><table class="table mb-0"><thead><tr><th>Người gửi</th><th>Số điện thoại</th><th>Nội dung</th><th>Thời gian</th><th>Trạng thái</th><th class="text-end">Xem</th></tr></thead><tbody>@forelse ($messages as $message)<tr class="{{ $message->read_at ? '' : 'fw-semibold' }}"><td><a href="{{ route('admin.contacts.show', $message) }}">{{ $message->full_name }}</a><div class="small text-muted-valora">{{ $message->email }}</div></td><td>{{ $message->phone ?: '—' }}</td><td>{{ Str::limit($message->message, 70) }}</td><td>{{ $message->created_at->format('d/m/Y H:i') }}</td><td><span class="badge {{ $message->read_at ? 'text-bg-light' : 'text-bg-success' }}">{{ $message->read_at ? 'Đã đọc' : 'Chưa đọc' }}</span></td><td class="text-end"><a class="btn btn-sm btn-outline-secondary" href="{{ route('admin.contacts.show', $message) }}" title="Xem tin nhắn" data-bs-toggle="tooltip"><i data-lucide="eye" class="icon-sm"></i></a></td></tr>@empty<tr><td colspan="6"><div class="empty-state border-0"><i data-lucide="inbox"></i><h2 class="h5 mt-3">Chưa có liên hệ</h2></div></td></tr>@endforelse</tbody></table></div>@if ($messages->hasPages())<div class="p-3 border-top">{{ $messages->links() }}</div>@endif</div>
+@endsection
