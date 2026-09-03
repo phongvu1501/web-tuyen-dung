@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 Route::view('/about', 'about')->name('about');
+// Route::view('/news', 'news.index')->name('news.index');
 
 Route::get('/careers', [CareerController::class, 'index'])->name('careers.index');
 Route::get('/application/success', [ApplicationController::class, 'success'])->name('applications.success');

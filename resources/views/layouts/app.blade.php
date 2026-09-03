@@ -62,6 +62,13 @@
                                 Việc làm
                             </a>
                         </li>
+{{-- 
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('news.*') ? 'active' : '' }}"
+                                href="{{ route('news.index') }}">
+                                Tin tức
+                            </a>
+                        </li> --}}
 
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('contact.*') ? 'active' : '' }}"
@@ -94,7 +101,7 @@
             <div class="row g-4 pb-4">
 
                 {{-- BRAND --}}
-                <div class="col-lg-5">
+                <div class="col-lg-4">
 
                     <a class="footer-brand d-inline-block mb-3" href="{{ route('home') }}"
                         aria-label="VALORA TRADING & SERVICES">
@@ -127,6 +134,10 @@
                             Việc làm
                         </a>
 
+                        {{-- <a href="{{ route('news.index') }}">
+                            Tin tức
+                        </a> --}}
+
                         <a href="{{ route('contact.create') }}">
                             Liên hệ
                         </a>
@@ -153,9 +164,9 @@
                             Hỗ trợ ứng viên
                         </a>
 
-                        <a href="{{ route('login') }}">
+                        {{-- <a href="{{ route('login') }}">
                             HR đăng nhập
-                        </a>
+                        </a> --}}
 
                     </div>
 
@@ -163,17 +174,33 @@
 
 
                 {{-- THÔNG TIN --}}
-                <div class="col-lg-3">
+                <div class="col-lg-4">
 
                     <div class="footer-title mb-3">
-                        VALORA TRADING &amp; SERVICES
+                        Thông tin liên hệ
                     </div>
 
-                    <p class="small mb-0">
-                        Kết nối giá trị – Kiến tạo thành công.
-                        Thông tin địa chỉ và các kênh liên hệ chính thức
-                        sẽ được cập nhật khi doanh nghiệp cung cấp.
-                    </p>
+                    <address class="footer-contact-list mb-0">
+                        <div class="footer-contact-item">
+                            <i data-lucide="map-pin" class="footer-contact-icon"></i>
+                            <span>Tầng 28, tòa nhà Handico, KĐT mới Mễ Trì Hạ, Nam Từ Liêm, Hà Nội</span>
+                        </div>
+
+                        <a class="footer-contact-item" href="tel:+842437875555">
+                            <i data-lucide="phone" class="footer-contact-icon"></i>
+                            <span>024.3787.5555</span>
+                        </a>
+
+                        <a class="footer-contact-item" href="mailto:hr@valorats.vn">
+                            <i data-lucide="mail" class="footer-contact-icon"></i>
+                            <span>hr@valorats.vn</span>
+                        </a>
+
+                        <a class="footer-contact-item" href="https://web-tuyen-dung-production-2c78.up.railway.app/" target="_blank" rel="noopener noreferrer">
+                            <i data-lucide="globe-2" class="footer-contact-icon"></i>
+                            <span>web-tuyen-dung-production-2c78.up.railway.app</span>
+                        </a>
+                    </address>
 
                 </div>
 
@@ -187,12 +214,12 @@
                        justify-content-between gap-2 small">
 
                 <span>
-                    &copy; {{ now()->year }}
+                    {{-- &copy; {{ now()->year }} --}}
                     VALORA TRADING &amp; SERVICES.
                 </span>
 
                 <span>
-                    Recruitment Portal
+                    {{-- Recruitment Portal --}}
                 </span>
 
             </div>
