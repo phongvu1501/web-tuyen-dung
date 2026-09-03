@@ -114,4 +114,20 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Legacy Plain-Text Password Migration
+    |--------------------------------------------------------------------------
+    |
+    | Accounts imported manually may still contain a plain-text password. The
+    | local default allows one successful login so it can be upgraded to bcrypt;
+    | production environments must opt in explicitly for a controlled migration.
+    |
+    */
+
+    'legacy_plaintext_passwords' => env(
+        'AUTH_ALLOW_LEGACY_PLAINTEXT_PASSWORDS',
+        env('APP_ENV') === 'local'
+    ),
+
 ];

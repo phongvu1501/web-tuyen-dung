@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 use RuntimeException;
 
@@ -20,12 +22,11 @@ class LoginController extends Controller
     {
         try {
             $authenticated = Auth::attempt($request->only('email', 'password'), $request->boolean('remember'));
-        } catch (RuntimeException $exception) {
-            report($exception);
-
-            return back()->withInput($request->only('email'))->withErrors([
-                'email' => 'Tài khoản chưa được cấu hình mật khẩu hợp lệ. Vui lòng liên hệ quản trị viên.',
-            ]);
+        } catch (RuntimeException) {
+            // A manually imported account may contain a valid Argon/PHP hash while
+            // this application is configured to use bcrypt. Verify it generically
+            // and upgrade it after login instead of exposing a hashing exception.
+            $authenticated = $this->attemptCompatibleHash($request);
         }
 
         if (! $authenticated) {
@@ -45,6 +46,40 @@ class LoginController extends Controller
         }
 
         return redirect()->intended(route('admin.dashboard'));
+    }
+
+    private function attemptCompatibleHash(LoginRequest $request): bool
+    {
+        $user = User::query()->where('email', $request->input('email'))->first();
+
+        if (! $user) {
+            return false;
+        }
+
+        $storedHash = $user->getRawOriginal($user->getAuthPasswordName());
+
+        if (! is_string($storedHash)) {
+            return false;
+        }
+
+        if (password_get_info($storedHash)['algo'] !== null) {
+            if (! password_verify($request->input('password'), $storedHash)) {
+                return false;
+            }
+        } elseif (
+            ! config('auth.legacy_plaintext_passwords')
+            || ! hash_equals($storedHash, $request->input('password'))
+        ) {
+            return false;
+        }
+
+        $user->forceFill([
+            $user->getAuthPasswordName() => Hash::make($request->input('password')),
+        ])->save();
+
+        Auth::login($user, $request->boolean('remember'));
+
+        return true;
     }
 
     public function destroy(): RedirectResponse

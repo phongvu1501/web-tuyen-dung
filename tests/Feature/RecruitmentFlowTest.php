@@ -11,6 +11,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -181,6 +182,62 @@ class RecruitmentFlowTest extends TestCase
         $this->assertSame('published', $job->refresh()->status);
         $this->patch(route('admin.jobs.close', $job))->assertRedirect();
         $this->assertSame('closed', $job->refresh()->status);
+    }
+
+    public function test_admin_inserted_with_a_compatible_php_hash_can_login(): void
+    {
+        if (! defined('PASSWORD_ARGON2ID')) {
+            $this->markTestSkipped('Argon2id is not available in this PHP build.');
+        }
+
+        $email = 'argon-admin-'.Str::random(8).'@example.com';
+        $password = 'secret-password';
+
+        DB::table('users')->insert([
+            'name' => 'Argon Admin',
+            'email' => $email,
+            'password' => password_hash($password, PASSWORD_ARGON2ID),
+            'is_admin' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $this->post(route('login.store'), [
+            'email' => strtoupper($email),
+            'password' => $password,
+        ])->assertRedirect(route('admin.dashboard'));
+
+        $upgradedHash = DB::table('users')->where('email', $email)->value('password');
+
+        $this->assertSame('bcrypt', password_get_info($upgradedHash)['algoName']);
+        $this->assertTrue(Hash::check($password, $upgradedHash));
+    }
+
+    public function test_legacy_plaintext_password_is_upgraded_when_migration_mode_is_enabled(): void
+    {
+        Config::set('auth.legacy_plaintext_passwords', true);
+
+        $email = 'legacy-admin-'.Str::random(8).'@example.com';
+        $password = 'legacy-password';
+
+        DB::table('users')->insert([
+            'name' => 'Legacy Admin',
+            'email' => $email,
+            'password' => $password,
+            'is_admin' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $this->post(route('login.store'), [
+            'email' => $email,
+            'password' => $password,
+        ])->assertRedirect(route('admin.dashboard'));
+
+        $upgradedHash = DB::table('users')->where('email', $email)->value('password');
+
+        $this->assertSame('bcrypt', password_get_info($upgradedHash)['algoName']);
+        $this->assertTrue(Hash::check($password, $upgradedHash));
     }
 
     public function test_malformed_password_hash_does_not_expose_runtime_error(): void

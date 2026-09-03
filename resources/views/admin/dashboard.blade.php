@@ -6,7 +6,7 @@
 @section('content')
     <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4"><div><h1 class="h3 fw-bold mb-1">Dashboard tuyển dụng</h1><p class="text-muted-valora mb-0">Tình hình tuyển dụng hiện tại của Valora.</p></div><a class="btn btn-primary btn-icon" href="{{ route('admin.jobs.create') }}"><i data-lucide="plus" class="icon-sm"></i>Thêm việc làm</a></div>
     <div class="row g-3 mb-4">
-        @foreach ([['briefcase-business', 'Tổng việc làm', $totalJobs, '#e8f2ee'], ['radio-tower', 'Việc đang tuyển', $activeJobs, '#e8f2ee'], ['users', 'Tổng ứng viên', $totalApplications, '#fff0ec'], ['user-plus', 'Ứng viên mới', $newApplications, '#fff0ec']] as [$icon, $label, $value, $background])
+        @foreach ([['briefcase-business', 'Tổng việc làm', $totalJobs, 'var(--brand-primary-light)'], ['radio-tower', 'Việc đang tuyển', $activeJobs, 'var(--brand-primary-light)'], ['users', 'Tổng ứng viên', $totalApplications, 'rgb(var(--brand-secondary-rgb) / 0.14)'], ['user-plus', 'Ứng viên mới', $newApplications, 'rgb(var(--brand-secondary-rgb) / 0.14)']] as [$icon, $label, $value, $background])
             <div class="col-sm-6 col-xl-3"><div class="admin-card stat-card h-100 d-flex align-items-center gap-3"><div class="stat-icon" style="background:{{ $background }}"><i data-lucide="{{ $icon }}"></i></div><div><div class="text-muted-valora small">{{ $label }}</div><div class="stat-value">{{ $value }}</div></div></div></div>
         @endforeach
     </div>
