@@ -99,7 +99,7 @@
                     <a class="footer-brand d-inline-block mb-3" href="{{ route('home') }}"
                         aria-label="VALORA TRADING & SERVICES">
                         <img src="{{ asset('images/valora-logo.png') }}" alt="VALORA TRADING & SERVICES"
-                            class="valora-footer-logo">
+                            class="valora-footer-logo" width="128" height="128" loading="lazy">
                     </a>
 
                     <p class="mb-0 col-lg-10">
